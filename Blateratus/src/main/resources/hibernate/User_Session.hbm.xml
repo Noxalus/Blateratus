@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+  <class name="com.mti.blateratus.model.User_Session" table="user_session">
+    <id name="id" type="int">
+      <column name="id"/>
+      <generator class="identity"/>
+    </id>
+    <property name="user_id" type="int">
+      <column name="user_id"/>
+    </property>
+    <property name="session_id" type="int">
+      <column name="session_id"/>
+    </property>
+  </class>
+</hibernate-mapping>

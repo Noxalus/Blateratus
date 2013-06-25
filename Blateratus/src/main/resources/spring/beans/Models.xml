@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+ 
+    <!-- Stock business object -->
+   <bean id="BlaterBo" class="com.mti.blateratus.bo.BlaterBo" >
+        <property name="blaterDao" ref="blaterDao" />
+   </bean>   
+   
+   <bean id="UsersBo" class="com.mti.blateratus.bo.UsersBo" >
+        <property name="usersDao" ref="usersDao" />
+   </bean>
+
+   <bean id="User_SessionBo" class="com.mti.blateratus.bo.User_SessionBo" >
+        <property name="usersessionDao" ref="usersessionDao" />
+   </bean>     
+
+   <!-- Stock Data Access Object -->
+   <bean id="blaterDao" class="com.mti.blateratus.dao.BlaterDao" >
+        <property name="sessionFactory" ref="sessionFactory"></property>
+   </bean>
+   
+   <bean id="usersDao" class="com.mti.blateratus.dao.UsersDao" >
+        <property name="sessionFactory" ref="sessionFactory"></property>
+   </bean>
+
+   <bean id="usersessionDao" class="com.mti.blateratus.dao.User_SessionDao" >
+        <property name="sessionFactory" ref="sessionFactory"></property>
+   </bean>
+ 
+</beans>
