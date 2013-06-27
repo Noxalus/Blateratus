@@ -17,20 +17,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Users extends Model implements Serializable {
 
     private int id;
-    private String token;
     private String hash;
     private String name;    
-    
-    public void setToken(String token) {
-        this.token = token;
-    }
 
     public void setHash(String hash) {
         this.hash = hash;
-    }
-
-    public String getToken() {
-        return token;
     }
 
     public String getHash() {

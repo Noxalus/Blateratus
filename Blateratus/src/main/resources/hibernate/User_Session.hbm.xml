@@ -9,8 +9,11 @@
     <property name="user_id" type="int">
       <column name="user_id"/>
     </property>
-    <property name="session_id" type="int">
-      <column name="session_id"/>
+    <property name="token" type="string">
+      <column length="255" name="token"/>
+    </property>
+    <property name="date" type="timestamp">
+      <column name="date"/>
     </property>
   </class>
 </hibernate-mapping>

@@ -50,9 +50,4 @@ public class UsersBo {
     {
         return usersDao.connect(name, password);
     }
-    
-    public Users findByToken(String token)
-    {
-        return usersDao.findByToken(token);
-    }
 }

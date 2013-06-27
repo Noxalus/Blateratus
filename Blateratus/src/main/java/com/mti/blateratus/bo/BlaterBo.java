@@ -1,11 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.mti.blateratus.bo;
 
 import com.mti.blateratus.dao.BlaterDao;
 import com.mti.blateratus.model.Blater;
+import com.mti.blateratus.model.Model;
 import java.util.List;
 
 /**
@@ -28,6 +25,10 @@ public class BlaterBo {
     public void save(Blater blater) {
         blatersDao.save(blater);
     }
+    
+    public Model add(Blater blater) {
+        return blatersDao.add(blater);
+    }
 
     public void update(Blater blater) {
         blatersDao.update(blater);
@@ -41,7 +42,7 @@ public class BlaterBo {
         return blatersDao.find(id);
     }
     
-    public List<Blater> getAll() {
-        return blatersDao.getAll();
+    public List<Blater> getAll(int user_id) {
+        return blatersDao.getAll(user_id);
     }
 }

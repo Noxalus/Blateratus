@@ -22,18 +22,13 @@ import javax.ws.rs.PathParam;
 public interface WebserviceInterface {
     @WebMethod
     @GET
-    @Path("/getUser/{id}")
-    public Users getUser(@PathParam("id") @WebParam(name="id") int id);
-
-    @WebMethod
-    @GET
     @Path("/register/{name}/{password}")
     public Model Register(@PathParam("name") @WebParam(name="name") String name,
                           @PathParam("password") @WebParam(name="password") String password);
     
     @WebMethod
     @GET
-    @Path("/Connection/{username}/{password}")
+    @Path("/connection/{username}/{password}")
     public Model Connection(@PathParam("username") @WebParam(name="username") String username,
                             @PathParam("password") @WebParam(name="password") String password);
     
@@ -46,4 +41,23 @@ public interface WebserviceInterface {
     @GET
     @Path("/getBlaters/{user_id}")
     public List<Blater> getBlaters(@PathParam("user_id") @WebParam(name="user_id") int user_id);
+    
+    @WebMethod
+    @GET
+    @Path("/postBlater/{user_token}/{content}")
+    public Model postBlater(@PathParam("user_token") @WebParam(name="user_token") String user_token, 
+                            @PathParam("content") @WebParam(name="content") String content);
+
+    @WebMethod
+    @GET
+    @Path("/updateBlater/{user_token}/{blater_id}/{content}")
+    public Model updateBlater(@PathParam("user_token") @WebParam(name="user_token") String user_token, 
+                            @PathParam("blater_id") @WebParam(name="blater_id") int blater_id,
+                            @PathParam("content") @WebParam(name="content") String content);
+    
+    @WebMethod
+    @GET
+    @Path("/deleteBlater/{user_token}/{blater_id}")
+    public Model deleteBlater(@PathParam("user_token") @WebParam(name="user_token") String user_token, 
+                              @PathParam("blater_id") @WebParam(name="blater_id") int blater_id);
 }

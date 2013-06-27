@@ -5,6 +5,8 @@
 package com.mti.blateratus.dao;
 
 import com.mti.blateratus.model.Blater;
+import com.mti.blateratus.model.Error;
+import com.mti.blateratus.model.Model;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,18 @@ public class BlaterDao extends HibernateDaoSupport {
     public void save(Blater blater) {
         getHibernateTemplate().save(blater);
     }
+    
+    public Model add(Blater blater) {
+        /*
+        List list = getHibernateTemplate().find("from Blater where content = ?", blater.getContent());
+        if (list.size() > 0)
+        {
+            Error error = new Error();
+            error.setMesage("Ce Blater existe déjà !");
+            return error;
+        }*/
+        return (Blater)getHibernateTemplate().merge(blater);
+    }
 
     public void update(Blater blater) {
         getHibernateTemplate().update(blater);
@@ -33,37 +47,21 @@ public class BlaterDao extends HibernateDaoSupport {
 
     public Blater find(int id) {
         List list = getHibernateTemplate().find("from Blater where id=?", id);
+        if (list.isEmpty())
+            return null;
+        
         return (Blater)list.get(0);
     }
     
-    public List<Blater> getAll()
+    public List<Blater> getAll(int user_id)
     {
-        List list = getHibernateTemplate().find("from blaters");
-        for (int i = 0; i < list.size(); i++)
-        {
-            final int id = ((Blater)list.get(i)).getId();
-            List tmp_list = (List)getHibernateTemplate().execute(new HibernateCallback()
-            {
-                public Object doInHibernate(Session session) throws HibernateException, SQLException {
-                    Query query = session.createSQLQuery("SELECT blaters.* FROM blaters");
-                    List list = query.list();
-                    return list;
-                }
-            });
-            
-            ArrayList<Blater> blaters = new ArrayList<Blater>();
-            for (int j = 0; j < tmp_list.size(); j++)
-            {
-                Object[] row = (Object[]) tmp_list.get(j);
-                Blater blater = new Blater();
-                blater.setId((Integer)row[0]);
-                // TODO
-
-                blaters.add(blater);
-            }
-            //((Blater)(list.get(i))).setBlater(blater);
-        }
-        
+        List list = getHibernateTemplate().find("from Blater where user_id=?", user_id);
+        return list;
+    }
+    
+    public List<Blater> getAllFromUser(int user_id)
+    {
+        List list = getHibernateTemplate().find("from Blater where user_id=?", user_id);
         return list;
     }
 }

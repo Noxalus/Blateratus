@@ -9,9 +9,6 @@
     <property name="name" type="string">
       <column length="255" name="name"/>
     </property>
-    <property name="token" type="string">
-      <column length="255" name="token"/>
-    </property>
     <property name="hash" type="string">
       <column length="255" name="hash"/>
     </property>

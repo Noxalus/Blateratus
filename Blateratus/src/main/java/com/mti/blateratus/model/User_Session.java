@@ -5,6 +5,7 @@
 package com.mti.blateratus.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -15,7 +16,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class User_Session extends Model implements Serializable {
     private int id;
     private int user_id;
-    private int session_id;
+    private String token;
+    private Date date;
 
     public int getId() {
         return id;
@@ -33,11 +35,19 @@ public class User_Session extends Model implements Serializable {
         this.user_id = user_id;
     }
 
-    public int getSession_id() {
-        return session_id;
+    public String getToken() {
+        return this.token;
     }
 
-    public void setSession_id(int session_id) {
-        this.session_id = session_id;
+    public void setToken(String token) {
+        this.token = token;
+    }
+    
+    public Date getDate() {
+        return this.date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }

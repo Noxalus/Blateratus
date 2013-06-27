@@ -39,15 +39,18 @@ public class User_SessionBo {
 
     public User_Session find(int id) {
         return usersessionDao.find(id);
-    }    
+    }
+    
+    public User_Session findByUserId(int user_id) {
+        return usersessionDao.findByUserId(user_id);
+    } 
+    
+    public User_Session findByToken(String token) {
+        return usersessionDao.findByToken(token);
+    }
     
     public Model Add(User_Session user_session)
     {
         return usersessionDao.Add(user_session);
-    }
-    
-    public int getNbReservation(int session_id)
-    {
-        return usersessionDao.getNbReservation(session_id);
     }
 }

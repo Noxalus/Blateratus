@@ -4,9 +4,9 @@
  */
 package com.mti.blateratus.dao;
 
-import com.mti.blateratus.model.ErrModel;
+import com.mti.blateratus.model.Error;
 import com.mti.blateratus.model.Model;
-import com.mti.blateratus.model.ErrModel;
+import com.mti.blateratus.model.Error;
 import com.mti.blateratus.model.Users;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -36,21 +36,12 @@ public class UsersDao extends HibernateDaoSupport {
         List list = getHibernateTemplate().find("from Users where id=?", id);
         return (Users)list.get(0);
     }
-
-    public Users findByToken(String token)
-    {
-        List list = getHibernateTemplate().find("from Users where token=?", token);
-        if (list.isEmpty())
-            return null;
-        else
-            return (Users)list.get(0);
-    }
     
     public Model add(Users user) {
         List list = getHibernateTemplate().find("from Users where name = ?", user.getName());
         if (list.size() > 0)
         {
-            ErrModel error = new ErrModel();
+            Error error = new Error();
             error.setMesage("Cet utilisateur existe déjà");
             return error;
         }
@@ -63,7 +54,7 @@ public class UsersDao extends HibernateDaoSupport {
         List list = getHibernateTemplate().find("from Users where name = ? AND hash = ?", params);
         if (list.isEmpty())
         {
-            ErrModel error = new ErrModel();
+            Error error = new Error();
             error.setMesage("Mauvais login ou de mot de passe");
             return error;            
         }

@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Noxalus
  */
 @XmlRootElement(name = "Error")
-public class ErrModel extends Model implements Serializable {
+public class Error extends Model implements Serializable {
     private String message;
     
     @XmlElement(name = "message")

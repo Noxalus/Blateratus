@@ -4,7 +4,7 @@
  */
 package com.mti.blateratus.dao;
 
-import com.mti.blateratus.model.ErrModel;
+import com.mti.blateratus.model.Error;
 import com.mti.blateratus.model.Model;
 import com.mti.blateratus.model.SuccessModel;
 import com.mti.blateratus.model.User_Session;
@@ -34,26 +34,26 @@ public class User_SessionDao extends HibernateDaoSupport {
         return (User_Session)list.get(0);
     }
     
-    public int getNbReservation(int session_id)
+    public User_Session findByUserId(int user_id)
     {
-        List list = getHibernateTemplate().find("from User_Session where session_id=?", session_id);
-        return list.size();
+        List list = getHibernateTemplate().find("from User_Session where user_id=?", user_id);
+        if (list.isEmpty())
+            return null;
+        else
+            return (User_Session)list.get(0);
+    }
+    
+    public User_Session findByToken(String token)
+    {
+        List list = getHibernateTemplate().find("from User_Session where token=?", token);
+        if (list.isEmpty())
+            return null;
+        else
+            return (User_Session)list.get(0);
     }
     
     public Model Add(User_Session user_session)
     {
-        Integer[] params = new Integer[] { user_session.getUser_id(), user_session.getSession_id() };
-        List list = getHibernateTemplate().find("from User_Session where user_id=? AND session_id=?", params);
-        if (!list.isEmpty())
-        {
-            ErrModel error = new ErrModel();
-            error.setMesage("Session déjà réservée");
-            return error;
-        }
-
-        getHibernateTemplate().merge(user_session);
-        SuccessModel success = new SuccessModel();
-        success.setMesage("Session réservée avec succès");
-        return success;
+        return (User_Session)getHibernateTemplate().merge(user_session);
     }
 }
