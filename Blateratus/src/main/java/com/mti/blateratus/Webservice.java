@@ -5,24 +5,21 @@
 package com.mti.blateratus;
 
 import com.mti.blateratus.bo.BlaterBo;
+import com.mti.blateratus.bo.ReblaterBo;
 import com.mti.blateratus.bo.User_SessionBo;
 import com.mti.blateratus.bo.UsersBo;
 import com.mti.blateratus.dao.BlaterDao;
+import com.mti.blateratus.dao.ReblaterDao;
 import com.mti.blateratus.dao.User_SessionDao;
 import com.mti.blateratus.dao.UsersDao;
 import com.mti.blateratus.model.Model;
 import com.mti.blateratus.model.Error;
 import com.mti.blateratus.model.Blater;
+import com.mti.blateratus.model.Reblater;
 import com.mti.blateratus.model.SuccessModel;
 import com.mti.blateratus.model.User_Session;
 import com.mti.blateratus.model.Users;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.sql.Date;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.jws.WebService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -42,6 +39,13 @@ public class Webservice implements WebserviceInterface {
         user_sessionBo.setUsersessionDao((User_SessionDao) appContext.getBean("usersessionDao"));
 
         User_Session user_session = user_sessionBo.findByToken(token);
+        
+        if (user_session == null) {
+            Error error = new Error();
+            error.setMesage("Cet utilisateur n'est pas connecté ou n'existe pas !");
+            return error;
+        }
+        
         Users user = userBo.find(user_session.getUser_id());
 
         if (user == null) {
@@ -53,7 +57,7 @@ public class Webservice implements WebserviceInterface {
         return user;
     }
 
-    public Model Register(String name, String password) {
+    public Model register(String name, String password) {
         try {
             ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
             UsersBo userBo = (UsersBo) appContext.getBean("UsersBo");
@@ -73,7 +77,7 @@ public class Webservice implements WebserviceInterface {
         }
     }
 
-    public Model Connection(String username, String password) {
+    public Model connection(String username, String password) {
         try {
             ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
             UsersBo userBo = (UsersBo) appContext.getBean("UsersBo");
@@ -109,7 +113,16 @@ public class Webservice implements WebserviceInterface {
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
         BlaterBo blaterBo = (BlaterBo) appContext.getBean("BlaterBo");
         blaterBo.setBlaterDao((BlaterDao) appContext.getBean("blaterDao"));
-        return blaterBo.find(id);
+        
+        Model model = blaterBo.find(id);
+        if (model == null)
+        {
+            Error error = new Error();
+            error.setMesage("Ce blater n'existe pas !");
+            return error;
+        }
+        
+        return (Blater)model;
     }
 
     public List<Blater> getBlaters(int user_id) {
@@ -200,5 +213,40 @@ public class Webservice implements WebserviceInterface {
             error.setMesage("Ce blater n'a pas été écrit pas cet utilisateur !");
             return error;
         }
+    }
+
+    public Model postReblater(String token, int blater_id) {
+        ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
+
+        BlaterBo blaterBo = (BlaterBo) appContext.getBean("BlaterBo");
+        blaterBo.setBlaterDao((BlaterDao) appContext.getBean("blaterDao"));
+        
+        ReblaterBo reblaterBo = (ReblaterBo) appContext.getBean("ReblaterBo");
+        reblaterBo.setReblaterDao((ReblaterDao) appContext.getBean("reblaterDao"));
+        
+        Model model;
+        if ((model = this.getUserByToken(token)) instanceof Error) {
+            return model;
+        }
+
+        Users user = (Users)model;
+        
+        Blater blater = blaterBo.find(blater_id);
+        if (blater == null)
+        {
+            Error error = new Error();
+            error.setMesage("Ce blater n'existe pas !");
+            return error;
+        }
+        
+        Reblater reblater = new Reblater();
+
+        reblater.setUser_id(user.getId());
+        reblater.setBlater_id(blater_id);
+        java.util.Date today = new java.util.Date();
+        java.sql.Date sqlToday = new java.sql.Date(today.getTime());
+        reblater.setDate(sqlToday);
+
+        return reblaterBo.add(reblater);
     }
 }

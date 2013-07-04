@@ -7,7 +7,11 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
     <!-- Stock business object -->
    <bean id="BlaterBo" class="com.mti.blateratus.bo.BlaterBo" >
         <property name="blaterDao" ref="blaterDao" />
-   </bean>   
+   </bean>
+   
+   <bean id="ReblaterBo" class="com.mti.blateratus.bo.ReblaterBo" >
+        <property name="reblaterDao" ref="reblaterDao" />
+   </bean>
    
    <bean id="UsersBo" class="com.mti.blateratus.bo.UsersBo" >
         <property name="usersDao" ref="usersDao" />
@@ -19,6 +23,10 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
    <!-- Stock Data Access Object -->
    <bean id="blaterDao" class="com.mti.blateratus.dao.BlaterDao" >
+        <property name="sessionFactory" ref="sessionFactory"></property>
+   </bean>
+   
+   <bean id="reblaterDao" class="com.mti.blateratus.dao.ReblaterDao" >
         <property name="sessionFactory" ref="sessionFactory"></property>
    </bean>
    

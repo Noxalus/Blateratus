@@ -6,12 +6,11 @@ package com.mti.blateratus;
 
 import com.mti.blateratus.model.Blater;
 import com.mti.blateratus.model.Model;
-import com.mti.blateratus.model.Users;
 import java.util.List;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
-import javax.jws.WebService;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
@@ -23,28 +22,28 @@ public interface WebserviceInterface {
     @WebMethod
     @GET
     @Path("/register/{name}/{password}")
-    public Model Register(@PathParam("name") @WebParam(name="name") String name,
+    public Model register(@PathParam("name") @WebParam(name="name") String name,
                           @PathParam("password") @WebParam(name="password") String password);
     
     @WebMethod
     @GET
     @Path("/connection/{username}/{password}")
-    public Model Connection(@PathParam("username") @WebParam(name="username") String username,
+    public Model connection(@PathParam("username") @WebParam(name="username") String username,
                             @PathParam("password") @WebParam(name="password") String password);
     
     @WebMethod
     @GET
-    @Path("/getBlater/{id}")
+    @Path("/blater/{id}")
     public Model getBlater(@PathParam("id") @WebParam(name="id") int id);
 
     @WebMethod
     @GET
-    @Path("/getBlaters/{user_id}")
+    @Path("/blaters/{user_id}")
     public List<Blater> getBlaters(@PathParam("user_id") @WebParam(name="user_id") int user_id);
     
     @WebMethod
-    @GET
-    @Path("/postBlater/{user_token}/{content}")
+    @POST
+    @Path("/blater")
     public Model postBlater(@PathParam("user_token") @WebParam(name="user_token") String user_token, 
                             @PathParam("content") @WebParam(name="content") String content);
 
@@ -59,5 +58,11 @@ public interface WebserviceInterface {
     @GET
     @Path("/deleteBlater/{user_token}/{blater_id}")
     public Model deleteBlater(@PathParam("user_token") @WebParam(name="user_token") String user_token, 
+                              @PathParam("blater_id") @WebParam(name="blater_id") int blater_id);
+    
+    @WebMethod
+    @GET
+    @Path("/postReblater/{user_token}/{blater_id}")
+    public Model postReblater(@PathParam("user_token") @WebParam(name="user_token") String user_token, 
                               @PathParam("blater_id") @WebParam(name="blater_id") int blater_id);
 }

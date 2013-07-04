@@ -22,8 +22,9 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
      <property name="mappingResources">
 	<list>
            <value>/hibernate/Users.hbm.xml</value>
-           <value>/hibernate/Blater.hbm.xml</value>
            <value>/hibernate/User_Session.hbm.xml</value>
+           <value>/hibernate/Blater.hbm.xml</value>
+            <value>/hibernate/Reblater.hbm.xml</value>
 	</list>
       </property>
  
