@@ -22,6 +22,7 @@ import com.mti.blateratus.model.Users;
 import java.util.List;
 import javax.jws.WebService;
 import javax.ws.rs.PathParam;
+import org.json.JSONObject;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -110,7 +111,7 @@ public class Webservice implements WebserviceInterface {
         }
     }
 
-    public Model getBlater(int id) {
+    public String getBlater(int id) {
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
         BlaterBo blaterBo = (BlaterBo) appContext.getBean("BlaterBo");
         blaterBo.setBlaterDao((BlaterDao) appContext.getBean("blaterDao"));
@@ -120,10 +121,13 @@ public class Webservice implements WebserviceInterface {
         {
             Error error = new Error();
             error.setMesage("Ce blater n'existe pas !");
-            return error;
+            //return error;
+            String json = new JSONObject(error).toString();
+            return json;
         }
-        
-        return (Blater)model;
+        String json = new JSONObject(model).toString();
+        return json;
+        //return (Blater)model;
     }
 
     public List<Blater> getBlaters(int user_id) {
