@@ -12,5 +12,8 @@
     <property name="content" type="string">
       <column length="255" name="content"/>
     </property>
+    <property name="date" type="timestamp">
+      <column name="date"/>
+    </property>
   </class>
 </hibernate-mapping>

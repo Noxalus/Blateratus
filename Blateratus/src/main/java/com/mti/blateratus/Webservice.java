@@ -35,6 +35,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 @WebService(serviceName = "Webservice")
 public class Webservice implements WebserviceInterface {
 
+    
     private Model getUserByToken(String token) {
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
         UsersBo userBo = (UsersBo) appContext.getBean("UsersBo");
@@ -81,6 +82,19 @@ public class Webservice implements WebserviceInterface {
         }
     }
 
+    /**
+    * Check that the user exists into the database and that the password
+    * given matchs well. 
+    * <p>
+    * If there is a problem (user doesn't exist, wrong 
+    * password, etc...) an Error object is returned with retails, else,
+    * a session is created an insert into the database with a random token
+    * to identify the user.. 
+    *
+    * @param  username  user's name
+    * @param  password user's password
+    * @return a Model that is either an Error or a User_Session
+    */
     public Model connection(String username, String password) {
         try {
             ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
@@ -175,7 +189,10 @@ public class Webservice implements WebserviceInterface {
 
         blater.setUser_id(user.getId());
         blater.setContent(content);
-
+        java.util.Date today = new java.util.Date();
+        java.sql.Date sqlToday = new java.sql.Date(today.getTime());
+        blater.setDate(sqlToday);
+        
         return blaterBo.add(blater);
     }
 

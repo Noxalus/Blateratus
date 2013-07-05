@@ -1,6 +1,7 @@
 package com.mti.blateratus.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -13,6 +14,7 @@ public class Blater extends Model implements Serializable {
     private int id;
     private int user_id;
     private String content;
+    private Date date;
 
     public int getId() {
         return id;
@@ -37,5 +39,13 @@ public class Blater extends Model implements Serializable {
 
     public void setContent(String content) {
         this.content = content;
+    }
+    
+    public Date getDate() {
+        return this.date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }

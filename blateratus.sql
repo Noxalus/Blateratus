@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client: localhost
--- Généré le: Ven 05 Juillet 2013 à 16:12
+-- Généré le: Ven 05 Juillet 2013 à 17:50
 -- Version du serveur: 5.5.24-log
 -- Version de PHP: 5.4.3
 
@@ -30,9 +30,10 @@ CREATE TABLE IF NOT EXISTS `blater` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `content` text NOT NULL,
+  `date` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=40 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=55 ;
 
 -- --------------------------------------------------------
 
@@ -44,8 +45,9 @@ CREATE TABLE IF NOT EXISTS `follow` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `follow_user_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_id` (`user_id`,`follow_user_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=19 ;
 
 -- --------------------------------------------------------
 
@@ -59,7 +61,7 @@ CREATE TABLE IF NOT EXISTS `reblater` (
   `blater_id` int(11) NOT NULL,
   `date` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=9 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=24 ;
 
 -- --------------------------------------------------------
 
@@ -72,7 +74,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `name` varchar(255) NOT NULL,
   `hash` varchar(32) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=127 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=144 ;
 
 -- --------------------------------------------------------
 
@@ -88,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `user_session` (
   PRIMARY KEY (`id`),
   KEY `IDX_8849CBDEA76ED395` (`user_id`),
   KEY `IDX_8849CBDE613FECDF` (`token`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=108 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=125 ;
 
 --
 -- Contraintes pour les tables exportées
@@ -99,6 +101,12 @@ CREATE TABLE IF NOT EXISTS `user_session` (
 --
 ALTER TABLE `blater`
   ADD CONSTRAINT `blater_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+
+--
+-- Contraintes pour la table `follow`
+--
+ALTER TABLE `follow`
+  ADD CONSTRAINT `follow_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
 -- Contraintes pour la table `user_session`
