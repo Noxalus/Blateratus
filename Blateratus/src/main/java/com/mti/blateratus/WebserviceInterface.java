@@ -10,12 +10,7 @@ import com.mti.blateratus.model.Reblater;
 import java.util.List;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.*;
 
 /**
  *
@@ -29,10 +24,10 @@ public interface WebserviceInterface {
                           @PathParam("password") @WebParam(name="password") String password);
     
     @WebMethod
-    @GET
-    @Path("/connection/{username}/{password}")
-    public Model connection(@PathParam("username") @WebParam(name="username") String username,
-                            @PathParam("password") @WebParam(name="password") String password);
+    @POST
+    @Path("/connection")
+    public Model connection(@FormParam("username")String username,
+                            @FormParam("password")String password);
     
     @WebMethod
     @GET
@@ -47,14 +42,14 @@ public interface WebserviceInterface {
     @WebMethod
     @POST
     @Path("/blater/{user_token}")
-    public Model postBlater(@PathParam("user_token") @WebParam(name="user_token") String user_token, String content);
+    public Model postBlater(@PathParam("user_token") @WebParam(name="user_token") String user_token, @FormParam("content") String content);
 
     @WebMethod
     @PUT
     @Path("/blater/{blater_id}/{user_token}")
     public Model updateBlater(@PathParam("user_token") @WebParam(name="user_token") String user_token, 
                               @PathParam("blater_id") @WebParam(name="blater_id") int blater_id,
-                              String content);
+                             @FormParam("content") String content);
     
     @WebMethod
     @DELETE
