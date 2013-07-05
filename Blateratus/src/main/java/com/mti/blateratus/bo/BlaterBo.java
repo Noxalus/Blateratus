@@ -43,6 +43,10 @@ public class BlaterBo {
     }
     
     public List<Blater> getAll(int user_id) {
-        return blatersDao.getAll(user_id);
+        return blatersDao.getAllFromUser(user_id);
+    }
+    
+     public List<Blater> getAllFromUser(int user_id) {
+        return blatersDao.getAllFromUser(user_id);
     }
 }
