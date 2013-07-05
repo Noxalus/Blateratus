@@ -150,6 +150,38 @@ public class Webservice implements WebserviceInterface {
 
         return list;
     }
+    
+    /**
+     * Delete a specific user with his session.
+     *
+     * @param user_id id of user we want to delete
+     * @return a model that is an Error or a SuccessModel
+     */
+    public Model deleteUser(int user_id) {
+        ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
+        UsersBo userBo = (UsersBo) appContext.getBean("UsersBo");
+        userBo.setUsersDao((UsersDao) appContext.getBean("usersDao"));
+        User_SessionBo user_sessionBo = (User_SessionBo) appContext.getBean("User_SessionBo");
+        user_sessionBo.setUsersessionDao((User_SessionDao) appContext.getBean("usersessionDao"));
+
+        Model model;
+        if ((model = user_sessionBo.findByUserId(user_id)) instanceof Error) {
+            return model;
+        }
+        
+        User_Session user_session = (User_Session)model;
+        
+        if ((model = userBo.find(user_id)) instanceof Error) {
+            return model;
+        }
+
+        Users user = (Users)model;
+
+        user_sessionBo.delete(user_session);
+        userBo.delete(user);
+        
+        return new SuccessModel();
+    }
 
     /**
      * Get a specific user.

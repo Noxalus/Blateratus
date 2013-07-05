@@ -379,4 +379,22 @@ public class WebserviceNGTest {
         assertNull(user.getHash());
         assertEquals(user.getId(), this.user_session.getUser_id());
     }
+
+    /**
+     * Test of deleteUser method, of class Webservice.
+     */
+    @Test(dependsOnMethods = {"testDeleteBlater", "testDeleteReblater", "testDeleteFollow"})
+    public void testDeleteUser() {
+        System.out.println("deleteUser");
+
+        Webservice instance = new Webservice();
+        
+        Model result = instance.deleteUser(this.user_session.getUser_id());
+        if (result instanceof Error) {
+            Error error = (Error) result;
+            fail(error.getMessage());
+        }
+        
+        assertTrue(true);
+    }
 }
