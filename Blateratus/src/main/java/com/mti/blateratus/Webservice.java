@@ -21,6 +21,7 @@ import com.mti.blateratus.model.User_Session;
 import com.mti.blateratus.model.Users;
 import java.util.List;
 import javax.jws.WebService;
+import javax.ws.rs.PathParam;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -215,6 +216,29 @@ public class Webservice implements WebserviceInterface {
         }
     }
 
+    public Model getReblater(int id) {
+        ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
+        ReblaterBo reblaterBo = (ReblaterBo) appContext.getBean("ReblaterBo");
+        reblaterBo.setReblaterDao((ReblaterDao) appContext.getBean("reblaterDao"));
+        
+        Model model = reblaterBo.find(id);
+        if (model == null)
+        {
+            Error error = new Error();
+            error.setMesage("Ce reblater n'existe pas !");
+            return error;
+        }
+        
+        return (Reblater)model;
+    }
+
+    public List<Reblater> getReblaters(int user_id) {
+        ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
+        ReblaterBo reblaterBo = (ReblaterBo) appContext.getBean("ReblaterBo");
+        reblaterBo.setReblaterDao((ReblaterDao) appContext.getBean("reblaterDao"));
+        return reblaterBo.getAll(user_id);
+    }
+    
     public Model postReblater(String token, int blater_id) {
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
 
@@ -246,7 +270,38 @@ public class Webservice implements WebserviceInterface {
         java.util.Date today = new java.util.Date();
         java.sql.Date sqlToday = new java.sql.Date(today.getTime());
         reblater.setDate(sqlToday);
-
+        
         return reblaterBo.add(reblater);
+    }
+
+    public Model deleteReblater(String user_token, int reblater_id) {
+        Error error = new Error();
+        ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
+
+        ReblaterBo reblaterBo = (ReblaterBo) appContext.getBean("ReblaterBo");
+        reblaterBo.setReblaterDao((ReblaterDao) appContext.getBean("reblaterDao"));
+
+        Reblater reblater = reblaterBo.find(reblater_id);
+
+        if (reblater == null) {
+            error.setMesage("Ce reblater n'existe pas !");
+            return error;
+        }
+
+        Model model;
+        if ((model = this.getUserByToken(user_token)) instanceof Error) {
+            return model;
+        }
+
+        Users user = (Users) model;
+
+        if (user.getId() == reblater.getUser_id()) {
+            reblaterBo.delete(reblater);
+
+            return new SuccessModel();
+        } else {
+            error.setMesage("Ce reblater n'a pas été écrit pas cet utilisateur !");
+            return error;
+        }
     }
 }
