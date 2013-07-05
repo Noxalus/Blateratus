@@ -33,10 +33,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  *
  * @author Noxalus
  */
-@WebService(serviceName = "Webservice")
 public class Webservice implements WebserviceInterface {
-
-    
     private Model getUserByToken(String token) {
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
         UsersBo userBo = (UsersBo) appContext.getBean("UsersBo");
