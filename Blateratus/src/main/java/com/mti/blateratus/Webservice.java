@@ -35,6 +35,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 @WebService(serviceName = "Webservice")
 public class Webservice implements WebserviceInterface {
+
     private Model getUserByToken(String token) {
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
         UsersBo userBo = (UsersBo) appContext.getBean("UsersBo");
@@ -46,7 +47,7 @@ public class Webservice implements WebserviceInterface {
 
         if (user_session == null) {
             Error error = new Error();
-            error.setMesage("Cet utilisateur n'est pas connectï¿½ ou n'existe pas !");
+            error.setMesage("Cet utilisateur n'est pas connecté ou n'existe pas !");
             return error;
         }
 
@@ -61,7 +62,14 @@ public class Webservice implements WebserviceInterface {
         return user;
     }
 
-    public Model register(String name, String password) {
+    /**
+     * Register a new user into the database.
+     *
+     * @param username user's name
+     * @param password user's password
+     * @return a Model that is either an Error or a Users object
+     */
+    public Model register(String username, String password) {
         try {
             ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
             UsersBo userBo = (UsersBo) appContext.getBean("UsersBo");
@@ -70,7 +78,7 @@ public class Webservice implements WebserviceInterface {
             String hash = Md5.encode(password);
 
             Users user = new Users();
-            user.setName(name);
+            user.setName(username);
             user.setHash(hash);
 
             return userBo.add(user);
@@ -123,7 +131,63 @@ public class Webservice implements WebserviceInterface {
             return error;
         }
     }
+    
+    /**
+     * Get the list of all users registered into the database.
+     * <p>
+     * MD5 hash of each user is not present.
+     *
+     * @return a list of users
+     */
+    public List<Users> getUsers() {
+        ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
+        UsersBo usersBo = (UsersBo) appContext.getBean("UsersBo");
+        usersBo.setUsersDao((UsersDao) appContext.getBean("usersDao"));
+        List<Users> list = usersBo.getAll();
+        for (Users user : list) {
+            user.setHash(null);
+        }
 
+        return list;
+    }
+
+    /**
+     * Get a specific user.
+     * <p>
+     * MD5 hash of each user is not present.
+     *
+     * @param id of the user we want to get
+     * @return a list of users
+     */
+    public Model getUser(int user_id) {
+        ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
+        UsersBo usersBo = (UsersBo) appContext.getBean("UsersBo");
+        usersBo.setUsersDao((UsersDao) appContext.getBean("usersDao"));
+
+        try {
+            Model model = usersBo.find(user_id);
+            if (model == null) {
+                Error error = new Error();
+                error.setMesage("Cet utilisateur n'existe pas !");
+                return error;
+            }
+            Users user = (Users) model;
+            user.setHash(null);
+
+            return user;
+        } catch (IndexOutOfBoundsException e) {
+            Error error = new Error();
+            error.setMesage("Cet utilisateur n'existe pas !");
+            return error;
+        }
+    }
+
+    /**
+     * Get the blater whose the id is the one given as argument
+     *
+     * @param id blater's id
+     * @return a Model that is either an Error or a Blater
+     */
     public Model getBlater(int id) {
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
         BlaterBo blaterBo = (BlaterBo) appContext.getBean("BlaterBo");
@@ -139,6 +203,17 @@ public class Webservice implements WebserviceInterface {
         return (Blater) model;
     }
 
+    /**
+     * Get all blaters of a specific user whose the id is given as argument.
+     * <p>
+     * If the second argument is true, this method returns only the blaters
+     * written by this user, else that returns also blaters of followed users.
+     *
+     * @param user_id user's id
+     * @param mine boolean to know if we want only user's blaters or also
+     * blaters of followed users
+     * @return a list of blaters
+     */
     public List<Blater> getBlaters(int user_id, boolean mine) {
         try {
             ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
@@ -185,7 +260,7 @@ public class Webservice implements WebserviceInterface {
                     }
                 }
                 Collections.sort(complete_list);
-                 return complete_list;
+                return complete_list;
             }
         } catch (Exception e) {
             return new LinkedList<Blater>();
@@ -194,6 +269,13 @@ public class Webservice implements WebserviceInterface {
 
     }
 
+    /**
+     * Insert a new blater into the database.
+     *
+     * @param user_token token of the current user session
+     * @param content content of the blater
+     * @return a model that is an Error or the blater inserted
+     */
     public Model postBlater(String user_token, String content) {
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
 
@@ -218,7 +300,15 @@ public class Webservice implements WebserviceInterface {
         return blaterBo.add(blater);
     }
 
-    public Model updateBlater(String token, int blater_id, String content) {
+    /**
+     * Update a specific blater.
+     *
+     * @param user_token token of the current user session
+     * @param blater_id id of blater we want to update
+     * @param content new content of the blater
+     * @return a model that is an Error or the blater inserted
+     */
+    public Model updateBlater(String user_token, int blater_id, String content) {
         Error error = new Error();
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
 
@@ -233,7 +323,7 @@ public class Webservice implements WebserviceInterface {
         }
 
         Model model;
-        if ((model = this.getUserByToken(token)) instanceof Error) {
+        if ((model = this.getUserByToken(user_token)) instanceof Error) {
             return model;
         }
 
@@ -249,7 +339,14 @@ public class Webservice implements WebserviceInterface {
         }
     }
 
-    public Model deleteBlater(String token, int blater_id) {
+    /**
+     * Delete a specific blater.
+     *
+     * @param user_token token of the current user session
+     * @param blater_id id of blater we want to delete
+     * @return a model that is an Error or a SuccessModel
+     */
+    public Model deleteBlater(String user_token, int blater_id) {
         Error error = new Error();
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
 
@@ -264,7 +361,7 @@ public class Webservice implements WebserviceInterface {
         }
 
         Model model;
-        if ((model = this.getUserByToken(token)) instanceof Error) {
+        if ((model = this.getUserByToken(user_token)) instanceof Error) {
             return model;
         }
 
@@ -280,6 +377,12 @@ public class Webservice implements WebserviceInterface {
         }
     }
 
+    /**
+     * Get a specific reblater.
+     *
+     * @param id id of the reblater that we want to get
+     * @return a model that is an Error or a Reblater
+     */
     public Model getReblater(int id) {
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
         ReblaterBo reblaterBo = (ReblaterBo) appContext.getBean("ReblaterBo");
@@ -295,6 +398,12 @@ public class Webservice implements WebserviceInterface {
         return (Reblater) model;
     }
 
+    /**
+     * Get all reblaters of a specific user.
+     *
+     * @param user_id id of the user whose we want to get reblaters
+     * @return a list of Reblaters
+     */
     public List<Reblater> getReblaters(int user_id) {
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
         ReblaterBo reblaterBo = (ReblaterBo) appContext.getBean("ReblaterBo");
@@ -302,7 +411,14 @@ public class Webservice implements WebserviceInterface {
         return reblaterBo.getAll(user_id);
     }
 
-    public Model postReblater(String token, int blater_id) {
+    /**
+     * Insert a new reblater into the database.
+     *
+     * @param user_token token of the current user session
+     * @param blater_id id of blater we want to reblater
+     * @return a model that is an Error or the reblater inserted
+     */
+    public Model postReblater(String user_token, int blater_id) {
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
 
         BlaterBo blaterBo = (BlaterBo) appContext.getBean("BlaterBo");
@@ -312,7 +428,7 @@ public class Webservice implements WebserviceInterface {
         reblaterBo.setReblaterDao((ReblaterDao) appContext.getBean("reblaterDao"));
 
         Model model;
-        if ((model = this.getUserByToken(token)) instanceof Error) {
+        if ((model = this.getUserByToken(user_token)) instanceof Error) {
             return model;
         }
 
@@ -336,6 +452,13 @@ public class Webservice implements WebserviceInterface {
         return reblaterBo.add(reblater);
     }
 
+    /**
+     * Delete a specific reblater.
+     *
+     * @param user_token token of the current user session
+     * @param reblater_id id of reblater we want to delete
+     * @return a model that is an Error or a SuccessModel
+     */
     public Model deleteReblater(String user_token, int reblater_id) {
         Error error = new Error();
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
@@ -367,6 +490,12 @@ public class Webservice implements WebserviceInterface {
         }
     }
 
+    /**
+     * Get all users that this user follows.
+     *
+     * @param user_id id of the user whom we want his follows
+     * @return a list of Follow
+     */
     public List<Follow> getFollows(int user_id) {
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
         FollowBo followBo = (FollowBo) appContext.getBean("FollowBo");
@@ -374,6 +503,12 @@ public class Webservice implements WebserviceInterface {
         return followBo.getAll(user_id);
     }
 
+    /**
+     * Get a specific follow.
+     *
+     * @param id id of the follow we want to get
+     * @return a model that is an Error or a Follow
+     */
     public Model getFollow(int id) {
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
         FollowBo followBo = (FollowBo) appContext.getBean("FollowBo");
@@ -389,6 +524,13 @@ public class Webservice implements WebserviceInterface {
         return (Follow) model;
     }
 
+    /**
+     * Insert a new follow into the database.
+     *
+     * @param user_token token of the current user session
+     * @param follow_user_id id of the user we want to follow
+     * @return a model that is an Error or a Follow
+     */
     public Model postFollow(String user_token, int follow_user_id) {
         try {
             ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
@@ -429,6 +571,13 @@ public class Webservice implements WebserviceInterface {
 
     }
 
+    /**
+     * Delete a specific follow.
+     *
+     * @param user_token token of the current user session
+     * @param follow_id id of the follow we want to get
+     * @return a model that is an Error or a Follow
+     */
     public Model deleteFollow(String user_token, int follow_id) {
         Error error = new Error();
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
@@ -458,42 +607,5 @@ public class Webservice implements WebserviceInterface {
             error.setMesage("Ce follow n'a pas ï¿½tï¿½ soumis par cet utilisateur !");
             return error;
         }
-    }
-
-    public List<Users> getUsers() {
-        ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
-        UsersBo usersBo = (UsersBo) appContext.getBean("UsersBo");
-        usersBo.setUsersDao((UsersDao) appContext.getBean("usersDao"));
-        List<Users> list = usersBo.getAll();
-        for (Users user : list) {
-            user.setHash(null);
-        }
-
-        return list;
-    }
-
-    public Model getUser(int user_id) {
-        ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
-        UsersBo usersBo = (UsersBo) appContext.getBean("UsersBo");
-        usersBo.setUsersDao((UsersDao) appContext.getBean("usersDao"));
-
-        try {
-
-            Model model = usersBo.find(user_id);
-            if (model == null) {
-                Error error = new Error();
-                error.setMesage("Cet utilisateur n'existe pas !");
-                return error;
-            }
-            Users user = (Users) model;
-            user.setHash(null);
-
-            return user;
-        } catch (IndexOutOfBoundsException e) {
-            Error error = new Error();
-            error.setMesage("Cet utilisateur n'existe pas !");
-            return error;
-        }
-
     }
 }
