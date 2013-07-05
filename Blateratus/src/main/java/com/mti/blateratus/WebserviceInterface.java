@@ -39,7 +39,7 @@ public interface WebserviceInterface {
     @GET
     @Path("/blater/{id}")
     @Produces("application/json")
-    public String getBlater(@PathParam("id") @WebParam(name="id") int id);
+    public Model getBlater(@PathParam("id") @WebParam(name="id") int id);
     
     @WebMethod
     @POST

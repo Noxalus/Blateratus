@@ -25,6 +25,7 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
            <value>/hibernate/User_Session.hbm.xml</value>
            <value>/hibernate/Blater.hbm.xml</value>
             <value>/hibernate/Reblater.hbm.xml</value>
+            <value>/hibernate/Follow.hbm.xml</value>
 	</list>
       </property>
  
