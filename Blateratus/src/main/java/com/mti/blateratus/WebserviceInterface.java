@@ -4,10 +4,7 @@
  */
 package com.mti.blateratus;
 
-import com.mti.blateratus.model.Blater;
-import com.mti.blateratus.model.Follow;
-import com.mti.blateratus.model.Model;
-import com.mti.blateratus.model.Reblater;
+import com.mti.blateratus.model.*;
 import java.util.List;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -32,8 +29,20 @@ public interface WebserviceInterface {
     
     @WebMethod
     @GET
-    @Path("/blaters/{user_id}")
-    public List<Blater> getBlaters(@PathParam("user_id") @WebParam(name="user_id") int user_id);
+    @Path("/users")
+    public List<Users> getUsers();
+    
+    @WebMethod
+    @GET
+    @Path("/users/{user_id}")
+    public Model getUser(@PathParam("user_id") @WebParam(name="user_id") int user_id);
+    
+    @WebMethod
+    @GET
+    @Path("/blaters/{user_id}/{mine}")
+    public List<Blater> getBlaters(@PathParam("user_id") @WebParam(name="user_id") int user_id,
+                                    @PathParam("mine") @WebParam(name="mine") boolean mine);
+    
     
     @WebMethod
     @GET

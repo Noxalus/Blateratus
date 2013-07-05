@@ -60,4 +60,10 @@ public class UsersDao extends HibernateDaoSupport {
         }
         return (Users)list.get(0);
     }
+    
+    public List<Users> getAll()
+    {
+        List list = getHibernateTemplate().find("from Users");
+        return list;
+    }
 }

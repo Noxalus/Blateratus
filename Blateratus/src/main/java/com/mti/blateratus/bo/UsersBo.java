@@ -7,6 +7,7 @@ package com.mti.blateratus.bo;
 import com.mti.blateratus.dao.UsersDao;
 import com.mti.blateratus.model.Model;
 import com.mti.blateratus.model.Users;
+import java.util.List;
 
 /**
  *
@@ -49,5 +50,9 @@ public class UsersBo {
     public Model connect(String name, String password)
     {
         return usersDao.connect(name, password);
+    }
+    
+    public List<Users> getAll() {
+        return usersDao.getAll();
     }
 }

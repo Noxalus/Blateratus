@@ -128,11 +128,29 @@ public class Webservice implements WebserviceInterface {
         return (Blater) model;
     }
 
-    public List<Blater> getBlaters(int user_id) {
+    public List<Blater> getBlaters(int user_id, boolean mine) {
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
         BlaterBo blaterBo = (BlaterBo) appContext.getBean("BlaterBo");
         blaterBo.setBlaterDao((BlaterDao) appContext.getBean("blaterDao"));
-        return blaterBo.getAll(user_id);
+
+        FollowBo fBo = (FollowBo) appContext.getBean("FollowBo");
+        fBo.setFollowDao((FollowDao) appContext.getBean("followDao"));
+
+        if (mine) {
+            return blaterBo.getAllFromUser(user_id);
+        } else {
+            List<Follow> followed = fBo.getAll(user_id);
+            List<Blater> complete_list = blaterBo.getAllFromUser(user_id);
+            for (Follow follow : followed) {
+                List<Blater> list = blaterBo.getAllFromUser(follow.getFollow_user_id());
+                for (Blater b : list) {
+                    complete_list.add(b);
+                }
+            }
+
+            return complete_list;
+        }
+
     }
 
     public Model postBlater(String token, String content) {
@@ -308,14 +326,14 @@ public class Webservice implements WebserviceInterface {
     public List<Follow> getFollows(int user_id) {
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
         FollowBo followBo = (FollowBo) appContext.getBean("FollowBo");
-        followBo.setReblaterDao((FollowDao) appContext.getBean("followDao"));
+        followBo.setFollowDao((FollowDao) appContext.getBean("followDao"));
         return followBo.getAll(user_id);
     }
 
     public Model getFollow(int id) {
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
         FollowBo followBo = (FollowBo) appContext.getBean("FollowBo");
-        followBo.setReblaterDao((FollowDao) appContext.getBean("followDao"));
+        followBo.setFollowDao((FollowDao) appContext.getBean("followDao"));
 
         Model model = followBo.find(id);
         if (model == null) {
@@ -334,7 +352,7 @@ public class Webservice implements WebserviceInterface {
         userBo.setUsersDao((UsersDao) appContext.getBean("usersDao"));
 
         FollowBo followBo = (FollowBo) appContext.getBean("FollowBo");
-        followBo.setReblaterDao((FollowDao) appContext.getBean("followDao"));
+        followBo.setFollowDao((FollowDao) appContext.getBean("followDao"));
 
         Model model;
         if ((model = this.getUserByToken(user_token)) instanceof Error) {
@@ -368,7 +386,7 @@ public class Webservice implements WebserviceInterface {
         }
 
         FollowBo followBo = (FollowBo) appContext.getBean("FollowBo");
-        followBo.setReblaterDao((FollowDao) appContext.getBean("followDao"));
+        followBo.setFollowDao((FollowDao) appContext.getBean("followDao"));
 
         Follow follow = followBo.find(follow_id);
 
@@ -387,5 +405,34 @@ public class Webservice implements WebserviceInterface {
             error.setMesage("Ce follow n'a pas été soumis par cet utilisateur !");
             return error;
         }
+    }
+
+    public List<Users> getUsers() {
+        ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
+        UsersBo usersBo = (UsersBo) appContext.getBean("UsersBo");
+        usersBo.setUsersDao((UsersDao) appContext.getBean("usersDao"));
+        List<Users> list = usersBo.getAll();
+        for (Users user : list) {
+            user.setHash(null);
+        }
+
+        return list;
+    }
+
+    public Model getUser(int user_id) {
+        ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
+        UsersBo usersBo = (UsersBo) appContext.getBean("UsersBo");
+        usersBo.setUsersDao((UsersDao) appContext.getBean("usersDao"));
+
+        Model model = usersBo.find(user_id);
+        if (model == null) {
+            Error error = new Error();
+            error.setMesage("Cet utilisateur n'existe pas !");
+            return error;
+        }
+        Users user = (Users) model;
+        user.setHash(null);
+
+        return user;
     }
 }

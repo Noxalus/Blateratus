@@ -12,12 +12,12 @@ import java.util.List;
 public class FollowBo {
     private FollowDao followDao;
     
-    public void setReblaterDao(FollowDao dao)
+    public void setFollowDao(FollowDao dao)
     {
         followDao = dao;
     }
     
-    public FollowDao getReblaterDao()
+    public FollowDao getFollowDao()
     {
         return followDao;
     }
