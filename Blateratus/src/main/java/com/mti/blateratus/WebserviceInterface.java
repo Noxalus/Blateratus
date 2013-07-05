@@ -15,10 +15,12 @@ import javax.ws.rs.*;
  * @author Noxalus
  */
 public interface WebserviceInterface {
-    @GET
-    @Path("/register/{name}/{password}")
-    public Model register(@PathParam("name") String name,
-                          @PathParam("password") String password);
+
+    @WebMethod
+    @POST
+    @Path("/register")
+    public Model register(@FormParam("name") String name,
+                          @FormParam("password") String password);
     
     @POST
     @Path("/connection")
@@ -34,62 +36,62 @@ public interface WebserviceInterface {
     public Model getUser(@PathParam("user_id") int user_id);
     
     @GET
-    @Path("/blaters/{user_id}/{mine}")
-    public List<Blater> getBlaters(@PathParam("user_id") int user_id,
-                                   @PathParam("mine") boolean mine);
+    @Path("/blaters")
+    public List<Blater> getBlaters(@QueryParam("user_id") int user_id,
+                                   @QueryParam("mine") boolean mine);
     
     @GET
-    @Path("/blater/{id}")
+    @Path("/blaters/{id}")
     public Model getBlater(@PathParam("id") int id);
     
     @POST
-    @Path("/blater/{user_token}")
-    public Model postBlater(@PathParam("user_token") String user_token, @FormParam("content") String content);
+    @Path("/blaters")
+    public Model postBlater(@QueryParam("user_token") String user_token, @FormParam("content") String content);
 
     @PUT
-    @Path("/blater/{blater_id}/{user_token}")
-    public Model updateBlater(@PathParam("user_token") String user_token, 
+    @Path("/blaters/{blater_id}")
+    public Model updateBlater(@QueryParam("user_token") String user_token, 
                               @PathParam("blater_id") int blater_id,
                               @FormParam("content") String content);
     
     @DELETE
-    @Path("/blater/{blater_id}/{user_token}")
-    public Model deleteBlater(@PathParam("user_token") String user_token, 
+    @Path("/blaters/{blater_id}")
+    public Model deleteBlater(@QueryParam("user_token") String user_token, 
                               @PathParam("blater_id") int blater_id);
     
     @GET
-    @Path("/reblaters/{user_id}")
-    public List<Reblater> getReblaters(@PathParam("user_id") int user_id);
-    
+    @Path("/reblaters")
+    public List<Reblater> getReblaters(@QueryParam("user_id") int user_id);
+
     @GET
-    @Path("/reblater/{id}")
+    @Path("/reblaters/{id}")
     public Model getReblater(@PathParam("id") int id);
     
     @POST
-    @Path("/reblater/{user_token}")
-    public Model postReblater(@PathParam("user_token") String user_token, 
+    @Path("/reblaters")
+    public Model postReblater(@QueryParam("user_token") String user_token, 
                               int blater_id);
     
     @DELETE
-    @Path("/reblater/{reblater_id}/{user_token}")
-    public Model deleteReblater(@PathParam("user_token") String user_token, 
-                              int reblater_id);
+    @Path("/reblaters/{reblater_id}")
+    public Model deleteReblater(@QueryParam("user_token") String user_token, 
+                                @PathParam("reblater_id") int reblater_id);
     
     @GET
-    @Path("/follows/{user_id}")
-    public List<Follow> getFollows(@PathParam("user_id") int user_id);
+    @Path("/follows")
+    public List<Follow> getFollows(@QueryParam("user_id") int user_id);
     
     @GET
-    @Path("/follow/{id}")
+    @Path("/follows/{id}")
     public Model getFollow(@PathParam("id") int id);
     
     @POST
-    @Path("/follow/{user_token}")
-    public Model postFollow(@PathParam("user_token") String user_token, 
-                            int follow_user_id);
+    @Path("/follows")
+    public Model postFollow(@QueryParam("user_token") String user_token, 
+                            @FormParam("follow_user_id") int follow_user_id);
     
     @DELETE
-    @Path("/follow/{follow_id}/{user_token}")
-    public Model deleteFollow(@PathParam("user_token") String user_token, 
-                              @PathParam("follow_id") int follow_id);
+    @Path("/follows/{follow_id}")
+    public Model deleteFollow(@QueryParam("user_token") String user_token, 
+                              @PathParam("follow_id")  int follow_id);
 }
