@@ -343,4 +343,40 @@ public class WebserviceNGTest {
         
         assertTrue(true);
     }
+
+    /**
+     * Test of getUsers method, of class Webservice.
+     */
+    @Test(dependsOnMethods = {"testRegister"})
+    public void testGetUsers() {
+        System.out.println("getUsers");
+        
+        Webservice instance = new Webservice();
+
+        List result = instance.getUsers();
+        
+        assertTrue(!result.isEmpty());
+    }
+
+    /**
+     * Test of getUser method, of class Webservice.
+     */
+    @Test(dependsOnMethods = {"testRegister"})
+    public void testGetUser() {
+        System.out.println("getUser");
+
+        Webservice instance = new Webservice();
+
+        Model result = instance.getUser(this.user_session.getUser_id());
+        if (result instanceof Error) {
+            Error error = (Error) result;
+            fail(error.getMessage());
+        }
+        
+        Users user = (Users)result;
+        
+        assertEquals(user.getName(), this.username);
+        assertNull(user.getHash());
+        assertEquals(user.getId(), this.user_session.getUser_id());
+    }
 }
