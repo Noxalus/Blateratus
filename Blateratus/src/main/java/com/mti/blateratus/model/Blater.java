@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Noxalus
  */
 @XmlRootElement(name = "blater")
-public class Blater extends Model implements Serializable {
+public class Blater extends Model implements Serializable, Comparable<Blater> {
     private int id;
     private int user_id;
     private String content;
@@ -47,5 +47,9 @@ public class Blater extends Model implements Serializable {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public int compareTo(Blater o) {
+        return -this.getDate().compareTo(o.getDate());
     }
 }

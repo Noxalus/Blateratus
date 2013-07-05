@@ -22,6 +22,7 @@ import com.mti.blateratus.model.Reblater;
 import com.mti.blateratus.model.SuccessModel;
 import com.mti.blateratus.model.User_Session;
 import com.mti.blateratus.model.Users;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import javax.jws.WebService;
@@ -35,7 +36,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 @WebService(serviceName = "Webservice")
 public class Webservice implements WebserviceInterface {
 
-    
     private Model getUserByToken(String token) {
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
         UsersBo userBo = (UsersBo) appContext.getBean("UsersBo");
@@ -83,18 +83,16 @@ public class Webservice implements WebserviceInterface {
     }
 
     /**
-    * Check that the user exists into the database and that the password
-    * given matchs well. 
-    * <p>
-    * If there is a problem (user doesn't exist, wrong 
-    * password, etc...) an Error object is returned with retails, else,
-    * a session is created an insert into the database with a random token
-    * to identify the user.. 
-    *
-    * @param  username  user's name
-    * @param  password user's password
-    * @return a Model that is either an Error or a User_Session
-    */
+     * Check that the user exists into the database and that the password given
+     * matchs well. <p> If there is a problem (user doesn't exist, wrong
+     * password, etc...) an Error object is returned with retails, else, a
+     * session is created an insert into the database with a random token to
+     * identify the user..
+     *
+     * @param username user's name
+     * @param password user's password
+     * @return a Model that is either an Error or a User_Session
+     */
     public Model connection(String username, String password) {
         try {
             ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
@@ -151,10 +149,28 @@ public class Webservice implements WebserviceInterface {
             FollowBo fBo = (FollowBo) appContext.getBean("FollowBo");
             fBo.setFollowDao((FollowDao) appContext.getBean("followDao"));
 
+            ReblaterBo rBo = (ReblaterBo) appContext.getBean("ReblaterBo");
+            rBo.setReblaterDao((ReblaterDao) appContext.getBean("reblaterDao"));
+
             if (mine) {
+
+                List<Reblater> reblaters = rBo.getAll(user_id);
+                List<Blater> complete_list = blaterBo.getAllFromUser(user_id);
+
+                for (Reblater reblater : reblaters) {
+                    Blater b = blaterBo.find(reblater.getBlater_id());
+                    if (b != null) {
+                        b.setDate(reblater.getDate());
+                        complete_list.add(b);
+                    }
+                }
+
+                Collections.sort(complete_list);
+
                 return blaterBo.getAllFromUser(user_id);
             } else {
                 List<Follow> followed = fBo.getAll(user_id);
+                List<Reblater> reblaters = rBo.getAll(user_id);
                 List<Blater> complete_list = blaterBo.getAllFromUser(user_id);
                 for (Follow follow : followed) {
                     List<Blater> list = blaterBo.getAllFromUser(follow.getFollow_user_id());
@@ -162,8 +178,15 @@ public class Webservice implements WebserviceInterface {
                         complete_list.add(b);
                     }
                 }
-
-                return complete_list;
+                for (Reblater reblater : reblaters) {
+                    Blater b = blaterBo.find(reblater.getBlater_id());
+                    if (b != null) {
+                        b.setDate(reblater.getDate());
+                        complete_list.add(b);
+                    }
+                }
+                Collections.sort(complete_list);
+                 return complete_list;
             }
         } catch (Exception e) {
             return new LinkedList<Blater>();
@@ -192,7 +215,7 @@ public class Webservice implements WebserviceInterface {
         java.util.Date today = new java.util.Date();
         java.sql.Date sqlToday = new java.sql.Date(today.getTime());
         blater.setDate(sqlToday);
-        
+
         return blaterBo.add(blater);
     }
 
