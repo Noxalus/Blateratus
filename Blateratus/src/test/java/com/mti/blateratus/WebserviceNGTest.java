@@ -131,7 +131,7 @@ public class WebserviceNGTest {
         
         Webservice instance = new Webservice();
         
-        List result = instance.getBlaters(this.user_session.getUser_id());
+        List result = instance.getBlaters(this.user_session.getUser_id(), false);
         
         assertTrue(!result.isEmpty());
         Blater blater = (Blater)result.get(0);
