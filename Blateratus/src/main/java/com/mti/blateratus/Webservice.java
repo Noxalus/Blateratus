@@ -166,7 +166,7 @@ public class Webservice implements WebserviceInterface {
 
                 Collections.sort(complete_list);
 
-                return blaterBo.getAllFromUser(user_id);
+                return complete_list;
             } else {
                 List<Follow> followed = fBo.getAll(user_id);
                 List<Reblater> reblaters = rBo.getAll(user_id);
