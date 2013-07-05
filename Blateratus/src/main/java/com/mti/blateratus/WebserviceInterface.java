@@ -16,10 +16,10 @@ import javax.ws.rs.*;
  */
 public interface WebserviceInterface {
     @WebMethod
-    @GET
-    @Path("/register/{name}/{password}")
-    public Model register(@PathParam("name") @WebParam(name="name") String name,
-                          @PathParam("password") @WebParam(name="password") String password);
+    @POST
+    @Path("/register")
+    public Model register(@FormParam("name") String name,
+                          @FormParam("password") String password);
     
     @WebMethod
     @POST
@@ -39,76 +39,75 @@ public interface WebserviceInterface {
     
     @WebMethod
     @GET
-    @Path("/blaters/{user_id}/{mine}")
-    public List<Blater> getBlaters(@PathParam("user_id") @WebParam(name="user_id") int user_id,
-                                    @PathParam("mine") @WebParam(name="mine") boolean mine);
+    @Path("/blaters")
+    public List<Blater> getBlaters(@QueryParam("user_id") @WebParam(name="user_id") int user_id,
+                                    @QueryParam("mine") @WebParam(name="mine") boolean mine);
     
     
     @WebMethod
     @GET
-    @Path("/blater/{id}")
-    @Produces("application/json")
+    @Path("/blaters/{id}")
     public Model getBlater(@PathParam("id") @WebParam(name="id") int id);
     
     @WebMethod
     @POST
-    @Path("/blater/{user_token}")
-    public Model postBlater(@PathParam("user_token") @WebParam(name="user_token") String user_token, @FormParam("content") String content);
+    @Path("/blaters")
+    public Model postBlater(@QueryParam("user_token") @WebParam(name="user_token") String user_token, @FormParam("content") String content);
 
     @WebMethod
     @PUT
-    @Path("/blater/{blater_id}/{user_token}")
-    public Model updateBlater(@PathParam("user_token") @WebParam(name="user_token") String user_token, 
+    @Path("/blaters/{blater_id}")
+    public Model updateBlater(@QueryParam("user_token") @WebParam(name="user_token") String user_token, 
                               @PathParam("blater_id") @WebParam(name="blater_id") int blater_id,
                              @FormParam("content") String content);
     
     @WebMethod
     @DELETE
-    @Path("/blater/{blater_id}/{user_token}")
-    public Model deleteBlater(@PathParam("user_token") @WebParam(name="user_token") String user_token, 
+    @Path("/blaters/{blater_id}")
+    public Model deleteBlater(@QueryParam("user_token") @WebParam(name="user_token") String user_token, 
                               @PathParam("blater_id") @WebParam(name="blater_id") int blater_id);
     
     @WebMethod
     @GET
-    @Path("/reblaters/{user_id}")
-    public List<Reblater> getReblaters(@PathParam("user_id") @WebParam(name="user_id") int user_id);
+    @Path("/reblaters")
+    public List<Reblater> getReblaters(@QueryParam("user_id") @WebParam(name="user_id") int user_id);
     
     @WebMethod
     @GET
-    @Path("/reblater/{id}")
+    @Path("/reblaters/{id}")
     public Model getReblater(@PathParam("id") @WebParam(name="id") int id);
     
     @WebMethod
     @POST
-    @Path("/reblater/{user_token}")
-    public Model postReblater(@PathParam("user_token") @WebParam(name="user_token") String user_token, 
+    @Path("/reblaters")
+    public Model postReblater(@QueryParam("user_token") @WebParam(name="user_token") String user_token, 
                               int blater_id);
     
     @WebMethod
     @DELETE
-    @Path("/reblater/{reblater_id}/{user_token}")
-    public Model deleteReblater(@PathParam("user_token") @WebParam(name="user_token") String user_token, 
-                              int reblater_id);
+    @Path("/reblaters/{reblater_id}")
+    public Model deleteReblater(@QueryParam("user_token") @WebParam(name="user_token") String user_token, 
+                              @PathParam("reblater_id") @WebParam(name="reblater_id") int reblater_id);
     
     @WebMethod
     @GET
-    @Path("/follows/{user_id}")
-    public List<Follow> getFollows(@PathParam("user_id") @WebParam(name="user_id") int user_id);
+    @Path("/follows")
+    public List<Follow> getFollows(@QueryParam("user_id") @WebParam(name="user_id") int user_id);
     
     @WebMethod
     @GET
-    @Path("/follow/{id}")
+    @Path("/follows/{id}")
     public Model getFollow(@PathParam("id") @WebParam(name="id") int id);
     
     @WebMethod
     @POST
-    @Path("/follow/{user_token}")
-    public Model postFollow(@PathParam("user_token") @WebParam(name="user_token") String user_token, 
-                            int follow_user_id);
+    @Path("/follows")
+    public Model postFollow(@QueryParam("user_token") @WebParam(name="user_token") String user_token, 
+                            @FormParam("follow_user_id") int follow_user_id);
     
     @WebMethod
     @DELETE
-    @Path("/follow/{follow_id}/{user_token}")
-    public Model deleteFollow(@PathParam("user_token") @WebParam(name="user_token") String user_token, 
+    @Path("/follows/{follow_id}")
+    public Model deleteFollow(@QueryParam("user_token") @WebParam(name="user_token") String user_token, 
                               @PathParam("follow_id") @WebParam(name="follow_id")  int follow_id);
 }

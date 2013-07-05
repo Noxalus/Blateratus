@@ -22,10 +22,9 @@ import com.mti.blateratus.model.Reblater;
 import com.mti.blateratus.model.SuccessModel;
 import com.mti.blateratus.model.User_Session;
 import com.mti.blateratus.model.Users;
+import java.util.LinkedList;
 import java.util.List;
 import javax.jws.WebService;
-import javax.ws.rs.PathParam;
-import org.json.JSONObject;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -125,43 +124,48 @@ public class Webservice implements WebserviceInterface {
             error.setMesage("Ce blater n'existe pas !");
             return error;
         }
-        
-        return (Blater)model;
+
+        return (Blater) model;
     }
 
     public List<Blater> getBlaters(int user_id, boolean mine) {
-        ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
-        BlaterBo blaterBo = (BlaterBo) appContext.getBean("BlaterBo");
-        blaterBo.setBlaterDao((BlaterDao) appContext.getBean("blaterDao"));
+        try {
+            ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
+            BlaterBo blaterBo = (BlaterBo) appContext.getBean("BlaterBo");
+            blaterBo.setBlaterDao((BlaterDao) appContext.getBean("blaterDao"));
 
-        FollowBo fBo = (FollowBo) appContext.getBean("FollowBo");
-        fBo.setFollowDao((FollowDao) appContext.getBean("followDao"));
+            FollowBo fBo = (FollowBo) appContext.getBean("FollowBo");
+            fBo.setFollowDao((FollowDao) appContext.getBean("followDao"));
 
-        if (mine) {
-            return blaterBo.getAllFromUser(user_id);
-        } else {
-            List<Follow> followed = fBo.getAll(user_id);
-            List<Blater> complete_list = blaterBo.getAllFromUser(user_id);
-            for (Follow follow : followed) {
-                List<Blater> list = blaterBo.getAllFromUser(follow.getFollow_user_id());
-                for (Blater b : list) {
-                    complete_list.add(b);
+            if (mine) {
+                return blaterBo.getAllFromUser(user_id);
+            } else {
+                List<Follow> followed = fBo.getAll(user_id);
+                List<Blater> complete_list = blaterBo.getAllFromUser(user_id);
+                for (Follow follow : followed) {
+                    List<Blater> list = blaterBo.getAllFromUser(follow.getFollow_user_id());
+                    for (Blater b : list) {
+                        complete_list.add(b);
+                    }
                 }
-            }
 
-            return complete_list;
+                return complete_list;
+            }
+        } catch (Exception e) {
+            return new LinkedList<Blater>();
         }
+
 
     }
 
-    public Model postBlater(String token, String content) {
+    public Model postBlater(String user_token, String content) {
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
 
         BlaterBo blaterBo = (BlaterBo) appContext.getBean("BlaterBo");
         blaterBo.setBlaterDao((BlaterDao) appContext.getBean("blaterDao"));
 
         Model model;
-        if ((model = this.getUserByToken(token)) instanceof Error) {
+        if ((model = this.getUserByToken(user_token)) instanceof Error) {
             return model;
         }
 
@@ -347,34 +351,43 @@ public class Webservice implements WebserviceInterface {
     }
 
     public Model postFollow(String user_token, int follow_user_id) {
-        ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
+        try {
+            ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
 
-        UsersBo userBo = (UsersBo) appContext.getBean("UsersBo");
-        userBo.setUsersDao((UsersDao) appContext.getBean("usersDao"));
+            UsersBo userBo = (UsersBo) appContext.getBean("UsersBo");
+            userBo.setUsersDao((UsersDao) appContext.getBean("usersDao"));
 
-        FollowBo followBo = (FollowBo) appContext.getBean("FollowBo");
-        followBo.setFollowDao((FollowDao) appContext.getBean("followDao"));
+            FollowBo followBo = (FollowBo) appContext.getBean("FollowBo");
+            followBo.setFollowDao((FollowDao) appContext.getBean("followDao"));
 
-        Model model;
-        if ((model = this.getUserByToken(user_token)) instanceof Error) {
-            return model;
-        }
+            Model model;
+            if ((model = this.getUserByToken(user_token)) instanceof Error) {
+                return model;
+            }
 
-        Users user = (Users) model;
+            Users user = (Users) model;
 
-        Users followUser = userBo.find(follow_user_id);
-        if (followUser == null) {
+            Users followUser = userBo.find(follow_user_id);
+            if (followUser == null) {
+                Error error = new Error();
+                error.setMesage("L'utilisateur que vous voulez suivre n'existe pas !");
+                return error;
+            }
+
+            Follow follow = new Follow();
+
+            follow.setUser_id(user.getId());
+            follow.setFollow_user_id(follow_user_id);
+
+
+            return followBo.add(follow);
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
             Error error = new Error();
-            error.setMesage("L'utilisateur que vous voulez suivre n'existe pas !");
+            error.setMesage("Vous ne pouvez pas follow le meme utilisateur deux fois.");
             return error;
         }
 
-        Follow follow = new Follow();
 
-        follow.setUser_id(user.getId());
-        follow.setFollow_user_id(follow_user_id);
-
-        return followBo.add(follow);
     }
 
     public Model deleteFollow(String user_token, int follow_id) {
@@ -425,15 +438,23 @@ public class Webservice implements WebserviceInterface {
         UsersBo usersBo = (UsersBo) appContext.getBean("UsersBo");
         usersBo.setUsersDao((UsersDao) appContext.getBean("usersDao"));
 
-        Model model = usersBo.find(user_id);
-        if (model == null) {
+        try {
+
+            Model model = usersBo.find(user_id);
+            if (model == null) {
+                Error error = new Error();
+                error.setMesage("Cet utilisateur n'existe pas !");
+                return error;
+            }
+            Users user = (Users) model;
+            user.setHash(null);
+
+            return user;
+        } catch (IndexOutOfBoundsException e) {
             Error error = new Error();
             error.setMesage("Cet utilisateur n'existe pas !");
             return error;
         }
-        Users user = (Users) model;
-        user.setHash(null);
 
-        return user;
     }
 }
