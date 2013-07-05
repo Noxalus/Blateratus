@@ -178,10 +178,10 @@ public class WebserviceNGTest {
     /**
      * Test of deleteBlater method, of class Webservice.
      */
-    @Test(dependsOnMethods = {"testGetBlater"})
+    @Test(dependsOnMethods = {"testDeleteReblater"})
     public void testDeleteBlater() {
         System.out.println("deleteBlater");
-        /*
+        
         Webservice instance = new Webservice();
         
         Model result = instance.deleteBlater(this.user_session.getToken(), this.blater.getId());
@@ -189,7 +189,6 @@ public class WebserviceNGTest {
             Error error = (Error) result;
             fail(error.getMessage());
         }
-        */
         assertTrue(true);
     }
 
@@ -272,37 +271,41 @@ public class WebserviceNGTest {
     /**
      * Test of getFollows method, of class Webservice.
      */
-    @Test
+    @Test(dependsOnMethods = {"testPostFollow"})
     public void testGetFollows() {
         System.out.println("getFollows");
-        assertTrue(true);
-        /*
-        int user_id = 0;
+        
         Webservice instance = new Webservice();
-        List expResult = null;
-        List result = instance.getFollows(user_id);
-        assertEquals(result, expResult);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-        */
+
+        List result = instance.getFollows(this.user_session.getUser_id());
+        
+        assertTrue(!result.isEmpty());
+        Follow follow = (Follow)result.get(0);
+        assertEquals(follow.getUser_id(), this.user_session.getUser_id());
+        assertEquals(follow.getFollow_user_id(), this.user_session.getUser_id());
+        
+        this.follow = follow;
     }
 
     /**
      * Test of getFollow method, of class Webservice.
      */
-    @Test
+    @Test(dependsOnMethods = {"testGetFollows"})
     public void testGetFollow() {
         System.out.println("getFollow");
-        assertTrue(true);
-        /*
-        int id = 0;
+        
         Webservice instance = new Webservice();
-        Model expResult = null;
-        Model result = instance.getFollow(id);
-        assertEquals(result, expResult);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-        */
+
+        Model result = instance.getFollow(this.follow.getId());
+        if (result instanceof Error) {
+            Error error = (Error) result;
+            fail(error.getMessage());
+        }
+        
+        Follow follow = (Follow)result;
+        
+        assertEquals(this.follow.getUser_id(), follow.getUser_id());
+        assertEquals(this.follow.getFollow_user_id(), follow.getFollow_user_id());
     }
 
     /**
@@ -326,19 +329,18 @@ public class WebserviceNGTest {
     /**
      * Test of deleteFollow method, of class Webservice.
      */
-    @Test
+    @Test(dependsOnMethods = {"testGetFollow"})
     public void testDeleteFollow() {
         System.out.println("deleteFollow");
-        assertTrue(true);
-        /*
-        String user_token = "";
-        int follow_id = 0;
+        
         Webservice instance = new Webservice();
-        Model expResult = null;
-        Model result = instance.deleteFollow(user_token, follow_id);
-        assertEquals(result, expResult);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-        */
+        
+        Model result = instance.deleteFollow(this.user_session.getToken(), this.follow.getId());
+        if (result instanceof Error) {
+            Error error = (Error) result;
+            fail(error.getMessage());
+        }
+        
+        assertTrue(true);
     }
 }
