@@ -114,7 +114,7 @@ public class Webservice implements WebserviceInterface {
         }
     }
 
-    public String getBlater(int id) {
+    public Model getBlater(int id) {
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
         BlaterBo blaterBo = (BlaterBo) appContext.getBean("BlaterBo");
         blaterBo.setBlaterDao((BlaterDao) appContext.getBean("blaterDao"));
@@ -123,14 +123,10 @@ public class Webservice implements WebserviceInterface {
         if (model == null) {
             Error error = new Error();
             error.setMesage("Ce blater n'existe pas !");
-            //return error;
-            String json = new JSONObject(error).toString();
-            return json;
+            return error;
         }
-
-        String json = new JSONObject(model).toString();
-        return json;
-        //return (Blater)model;
+        
+        return (Blater)model;
     }
 
     public List<Blater> getBlaters(int user_id, boolean mine) {

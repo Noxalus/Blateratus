@@ -6,11 +6,15 @@ package com.mti.blateratus;
 
 import com.mti.blateratus.model.Model;
 import com.mti.blateratus.model.Users;
+import com.mti.blateratus.model.Error;
+import com.mti.blateratus.model.User_Session;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.List;
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import junit.framework.TestCase;
 
 /**
@@ -18,143 +22,52 @@ import junit.framework.TestCase;
  * @author Martial
  */
 public class WebserviceTest extends TestCase {
+
+    private String username;
+    private String password;
+    private String token;
+    
+    private Model CreateRandomUser()
+    {
+        SecureRandom random = new SecureRandom();
+        
+        String username = new BigInteger(130, random).toString(32);
+        String password = new BigInteger(130, random).toString(32);
+
+         Webservice instance = new Webservice();
+        instance.register(username, password);
+        System.out.println("Registered a new user with these credentials:\n\tUsername: " + username + "\n\tPassword: " + password);
+
+        Model result = instance.connection(username, password);
+
+        if (result instanceof Error) {
+            Error error = (Error) result;
+            return error;
+        }
+
+        User_Session userSession = (User_Session) result;
+        
+        return userSession;
+    }
     
     public WebserviceTest(String testName) {
         super(testName);
+        SecureRandom random = new SecureRandom();
+        
+        this.username = new BigInteger(130, random).toString(32);
+        this.password = new BigInteger(130, random).toString(32);
+        this.token = null;
     }
-    
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
     }
-    
+
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
     }
 
-    /**
-     * Test of Register method, of class Webservice.
-     */
-    public void testRegister() {
-        System.out.println("Register");
-        
-        assertTrue(true);
-        /*
-        SecureRandom random = new SecureRandom();
-        String name = new BigInteger(130, random).toString(32);
-        String password = new BigInteger(130, random).toString(32);
-        Webservice instance = new Webservice();
-        Users result = (Users)instance.Register(name, password);
-        assertEquals(name, result.getName());
-        assertEquals(Md5.encode(password), result.getHash());
-        */
-    }
-
-    /**
-     * Test of Connection method, of class Webservice.
-     */
-    public void testConnection() {
-        assertTrue(true);
-        /*
-        System.out.println("Connection");
-        SecureRandom random = new SecureRandom();
-        String username = new BigInteger(130, random).toString(32);
-        String password = new BigInteger(130, random).toString(32);
-        
-        Webservice instance = new Webservice();
-        instance.register(username, password);
-        System.out.println("Registered a new user with these credentials:\nUsername: " + username + "\nPassword: " + password);
-        
-        Model result = instance.connection(username, password);
-        assertTrue(true);
-        */
-    }
-
-    /**
-     * Test of getBlater method, of class Webservice.
-     */
-    public void testGetBlater() {
-        assertTrue(true);
-        /*
-        System.out.println("getBlater");
-        int id = 0;
-        Webservice instance = new Webservice();
-        Model expResult = null;
-        Model result = instance.getBlater(id);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        assertTrue(true);
-        //fail("The test case is a prototype.");
-        */
-    }
-
-    /**
-     * Test of getBlaters method, of class Webservice.
-     */
-    public void testGetBlaters() {
-        /*
-        System.out.println("getBlaters");
-        int user_id = 6;
-        Webservice instance = new Webservice();
-        List result = instance.getBlaters(user_id);
-        */
-        assertTrue(true);
-        //assertTrue(!result.isEmpty());
-    }
-
-    /**
-     * Test of postBlater method, of class Webservice.
-     */
-    public void testPostBlater() {
-        System.out.println("postBlater");
-        /*
-        String token = "";
-        String content = "";
-        Webservice instance = new Webservice();
-        Model expResult = null;
-        Model result = instance.postBlater(token, content);
-        assertEquals(expResult, result);
-        */
-        // TODO review the generated test code and remove the default call to fail.
-        assertTrue(true);
-        //fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of updateBlater method, of class Webservice.
-     */
-    public void testUpdateBlater() {
-        System.out.println("updateBlater");
-        /*
-        String token = "";
-        int blater_id = 0;
-        String content = "";
-        Webservice instance = new Webservice();
-        Model expResult = null;
-        Model result = instance.updateBlater(token, blater_id, content);
-        assertEquals(expResult, result);
-        */
-        // TODO review the generated test code and remove the default call to fail.
-        assertTrue(true);
-        //fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of deleteBlater method, of class Webservice.
-     */
-    public void testDeleteBlater() {
-        /*
-        System.out.println("deleteBlater");
-        String token = "";
-        int blater_id = 0;
-        Webservice instance = new Webservice();
-        Model expResult = null;
-        Model result = instance.deleteBlater(token, blater_id);
-        assertEquals(expResult, result);
-        */
-        // TODO review the generated test code and remove the default call to fail.
-        assertTrue(true);
-        //fail("The test case is a prototype.");
-    }
+    
 }

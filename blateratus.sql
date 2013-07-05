@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client: localhost
--- Généré le: Jeu 04 Juillet 2013 à 23:18
+-- Généré le: Ven 05 Juillet 2013 à 16:12
 -- Version du serveur: 5.5.24-log
 -- Version de PHP: 5.4.3
 
@@ -32,7 +32,20 @@ CREATE TABLE IF NOT EXISTS `blater` (
   `content` text NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=17 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=40 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `follow`
+--
+
+CREATE TABLE IF NOT EXISTS `follow` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `follow_user_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
 
 -- --------------------------------------------------------
 
@@ -46,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `reblater` (
   `blater_id` int(11) NOT NULL,
   `date` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=9 ;
 
 -- --------------------------------------------------------
 
@@ -59,7 +72,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `name` varchar(255) NOT NULL,
   `hash` varchar(32) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=74 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=127 ;
 
 -- --------------------------------------------------------
 
@@ -75,7 +88,7 @@ CREATE TABLE IF NOT EXISTS `user_session` (
   PRIMARY KEY (`id`),
   KEY `IDX_8849CBDEA76ED395` (`user_id`),
   KEY `IDX_8849CBDE613FECDF` (`token`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=64 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=108 ;
 
 --
 -- Contraintes pour les tables exportées
