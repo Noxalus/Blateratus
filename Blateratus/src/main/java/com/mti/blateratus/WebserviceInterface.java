@@ -5,6 +5,7 @@
 package com.mti.blateratus;
 
 import com.mti.blateratus.model.Blater;
+import com.mti.blateratus.model.Follow;
 import com.mti.blateratus.model.Model;
 import com.mti.blateratus.model.Reblater;
 import java.util.List;
@@ -78,4 +79,26 @@ public interface WebserviceInterface {
     @Path("/reblater/{reblater_id}/{user_token}")
     public Model deleteReblater(@PathParam("user_token") @WebParam(name="user_token") String user_token, 
                               int reblater_id);
+    
+    @WebMethod
+    @GET
+    @Path("/follows/{user_id}")
+    public List<Follow> getFollows(@PathParam("user_id") @WebParam(name="user_id") int user_id);
+    
+    @WebMethod
+    @GET
+    @Path("/follow/{id}")
+    public Model getFollow(@PathParam("id") @WebParam(name="id") int id);
+    
+    @WebMethod
+    @POST
+    @Path("/follow/{user_token}")
+    public Model postFollow(@PathParam("user_token") @WebParam(name="user_token") String user_token, 
+                            int follow_user_id);
+    
+    @WebMethod
+    @DELETE
+    @Path("/follow/{follow_id}/{user_token}")
+    public Model deleteFollow(@PathParam("user_token") @WebParam(name="user_token") String user_token, 
+                              @PathParam("follow_id") @WebParam(name="follow_id")  int follow_id);
 }

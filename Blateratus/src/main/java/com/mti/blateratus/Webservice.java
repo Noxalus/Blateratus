@@ -5,16 +5,19 @@
 package com.mti.blateratus;
 
 import com.mti.blateratus.bo.BlaterBo;
+import com.mti.blateratus.bo.FollowBo;
 import com.mti.blateratus.bo.ReblaterBo;
 import com.mti.blateratus.bo.User_SessionBo;
 import com.mti.blateratus.bo.UsersBo;
 import com.mti.blateratus.dao.BlaterDao;
+import com.mti.blateratus.dao.FollowDao;
 import com.mti.blateratus.dao.ReblaterDao;
 import com.mti.blateratus.dao.User_SessionDao;
 import com.mti.blateratus.dao.UsersDao;
 import com.mti.blateratus.model.Model;
 import com.mti.blateratus.model.Error;
 import com.mti.blateratus.model.Blater;
+import com.mti.blateratus.model.Follow;
 import com.mti.blateratus.model.Reblater;
 import com.mti.blateratus.model.SuccessModel;
 import com.mti.blateratus.model.User_Session;
@@ -40,13 +43,13 @@ public class Webservice implements WebserviceInterface {
         user_sessionBo.setUsersessionDao((User_SessionDao) appContext.getBean("usersessionDao"));
 
         User_Session user_session = user_sessionBo.findByToken(token);
-        
+
         if (user_session == null) {
             Error error = new Error();
             error.setMesage("Cet utilisateur n'est pas connecté ou n'existe pas !");
             return error;
         }
-        
+
         Users user = userBo.find(user_session.getUser_id());
 
         if (user == null) {
@@ -114,16 +117,15 @@ public class Webservice implements WebserviceInterface {
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
         BlaterBo blaterBo = (BlaterBo) appContext.getBean("BlaterBo");
         blaterBo.setBlaterDao((BlaterDao) appContext.getBean("blaterDao"));
-        
+
         Model model = blaterBo.find(id);
-        if (model == null)
-        {
+        if (model == null) {
             Error error = new Error();
             error.setMesage("Ce blater n'existe pas !");
             return error;
         }
-        
-        return (Blater)model;
+
+        return (Blater) model;
     }
 
     public List<Blater> getBlaters(int user_id) {
@@ -138,14 +140,14 @@ public class Webservice implements WebserviceInterface {
 
         BlaterBo blaterBo = (BlaterBo) appContext.getBean("BlaterBo");
         blaterBo.setBlaterDao((BlaterDao) appContext.getBean("blaterDao"));
-        
+
         Model model;
         if ((model = this.getUserByToken(token)) instanceof Error) {
             return model;
         }
 
-        Users user = (Users)model;
-        
+        Users user = (Users) model;
+
         Blater blater = new Blater();
 
         blater.setUser_id(user.getId());
@@ -180,7 +182,7 @@ public class Webservice implements WebserviceInterface {
 
             return blaterBo.add(blater);
         } else {
-            error.setMesage("Ce blater n'a pas été écrit pas cet utilisateur !");
+            error.setMesage("Ce blater n'a pas été écrit par cet utilisateur !");
             return error;
         }
     }
@@ -220,16 +222,15 @@ public class Webservice implements WebserviceInterface {
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
         ReblaterBo reblaterBo = (ReblaterBo) appContext.getBean("ReblaterBo");
         reblaterBo.setReblaterDao((ReblaterDao) appContext.getBean("reblaterDao"));
-        
+
         Model model = reblaterBo.find(id);
-        if (model == null)
-        {
+        if (model == null) {
             Error error = new Error();
             error.setMesage("Ce reblater n'existe pas !");
             return error;
         }
-        
-        return (Reblater)model;
+
+        return (Reblater) model;
     }
 
     public List<Reblater> getReblaters(int user_id) {
@@ -238,31 +239,30 @@ public class Webservice implements WebserviceInterface {
         reblaterBo.setReblaterDao((ReblaterDao) appContext.getBean("reblaterDao"));
         return reblaterBo.getAll(user_id);
     }
-    
+
     public Model postReblater(String token, int blater_id) {
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
 
         BlaterBo blaterBo = (BlaterBo) appContext.getBean("BlaterBo");
         blaterBo.setBlaterDao((BlaterDao) appContext.getBean("blaterDao"));
-        
+
         ReblaterBo reblaterBo = (ReblaterBo) appContext.getBean("ReblaterBo");
         reblaterBo.setReblaterDao((ReblaterDao) appContext.getBean("reblaterDao"));
-        
+
         Model model;
         if ((model = this.getUserByToken(token)) instanceof Error) {
             return model;
         }
 
-        Users user = (Users)model;
-        
+        Users user = (Users) model;
+
         Blater blater = blaterBo.find(blater_id);
-        if (blater == null)
-        {
+        if (blater == null) {
             Error error = new Error();
             error.setMesage("Ce blater n'existe pas !");
             return error;
         }
-        
+
         Reblater reblater = new Reblater();
 
         reblater.setUser_id(user.getId());
@@ -270,7 +270,7 @@ public class Webservice implements WebserviceInterface {
         java.util.Date today = new java.util.Date();
         java.sql.Date sqlToday = new java.sql.Date(today.getTime());
         reblater.setDate(sqlToday);
-        
+
         return reblaterBo.add(reblater);
     }
 
@@ -300,7 +300,91 @@ public class Webservice implements WebserviceInterface {
 
             return new SuccessModel();
         } else {
-            error.setMesage("Ce reblater n'a pas été écrit pas cet utilisateur !");
+            error.setMesage("Ce reblater n'a pas été soumis par cet utilisateur !");
+            return error;
+        }
+    }
+
+    public List<Follow> getFollows(int user_id) {
+        ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
+        FollowBo followBo = (FollowBo) appContext.getBean("FollowBo");
+        followBo.setReblaterDao((FollowDao) appContext.getBean("followDao"));
+        return followBo.getAll(user_id);
+    }
+
+    public Model getFollow(int id) {
+        ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
+        FollowBo followBo = (FollowBo) appContext.getBean("FollowBo");
+        followBo.setReblaterDao((FollowDao) appContext.getBean("followDao"));
+
+        Model model = followBo.find(id);
+        if (model == null) {
+            Error error = new Error();
+            error.setMesage("Ce follow n'existe pas !");
+            return error;
+        }
+
+        return (Follow) model;
+    }
+
+    public Model postFollow(String user_token, int follow_user_id) {
+        ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
+
+        UsersBo userBo = (UsersBo) appContext.getBean("UsersBo");
+        userBo.setUsersDao((UsersDao) appContext.getBean("usersDao"));
+
+        FollowBo followBo = (FollowBo) appContext.getBean("FollowBo");
+        followBo.setReblaterDao((FollowDao) appContext.getBean("followDao"));
+
+        Model model;
+        if ((model = this.getUserByToken(user_token)) instanceof Error) {
+            return model;
+        }
+
+        Users user = (Users) model;
+
+        Users followUser = userBo.find(follow_user_id);
+        if (followUser == null) {
+            Error error = new Error();
+            error.setMesage("L'utilisateur que vous voulez suivre n'existe pas !");
+            return error;
+        }
+
+        Follow follow = new Follow();
+
+        follow.setUser_id(user.getId());
+        follow.setFollow_user_id(follow_user_id);
+
+        return followBo.add(follow);
+    }
+
+    public Model deleteFollow(String user_token, int follow_id) {
+        Error error = new Error();
+        ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
+
+        Model model;
+        if ((model = this.getUserByToken(user_token)) instanceof Error) {
+            return model;
+        }
+
+        FollowBo followBo = (FollowBo) appContext.getBean("FollowBo");
+        followBo.setReblaterDao((FollowDao) appContext.getBean("followDao"));
+
+        Follow follow = followBo.find(follow_id);
+
+        if (follow == null) {
+            error.setMesage("Ce follow n'existe pas !");
+            return error;
+        }
+
+        Users user = (Users) model;
+
+        if (user.getId() == follow.getUser_id()) {
+            followBo.delete(follow);
+
+            return new SuccessModel();
+        } else {
+            error.setMesage("Ce follow n'a pas été soumis par cet utilisateur !");
             return error;
         }
     }
