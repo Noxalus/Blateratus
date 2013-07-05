@@ -35,7 +35,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 @WebService(serviceName = "Webservice")
 public class Webservice implements WebserviceInterface {
-
     private Model getUserByToken(String token) {
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
         UsersBo userBo = (UsersBo) appContext.getBean("UsersBo");
@@ -47,7 +46,7 @@ public class Webservice implements WebserviceInterface {
 
         if (user_session == null) {
             Error error = new Error();
-            error.setMesage("Cet utilisateur n'est pas connecté ou n'existe pas !");
+            error.setMesage("Cet utilisateur n'est pas connectï¿½ ou n'existe pas !");
             return error;
         }
 
@@ -55,7 +54,7 @@ public class Webservice implements WebserviceInterface {
 
         if (user == null) {
             Error error = new Error();
-            error.setMesage("Cet utilisateur n'est pas connecté ou n'existe pas !");
+            error.setMesage("Cet utilisateur n'est pas connectï¿½ ou n'existe pas !");
             return error;
         }
 
@@ -245,7 +244,7 @@ public class Webservice implements WebserviceInterface {
 
             return blaterBo.add(blater);
         } else {
-            error.setMesage("Ce blater n'a pas été écrit par cet utilisateur !");
+            error.setMesage("Ce blater n'a pas ï¿½tï¿½ ï¿½crit par cet utilisateur !");
             return error;
         }
     }
@@ -276,7 +275,7 @@ public class Webservice implements WebserviceInterface {
 
             return new SuccessModel();
         } else {
-            error.setMesage("Ce blater n'a pas été écrit pas cet utilisateur !");
+            error.setMesage("Ce blater n'a pas ï¿½tï¿½ ï¿½crit pas cet utilisateur !");
             return error;
         }
     }
@@ -363,7 +362,7 @@ public class Webservice implements WebserviceInterface {
 
             return new SuccessModel();
         } else {
-            error.setMesage("Ce reblater n'a pas été soumis par cet utilisateur !");
+            error.setMesage("Ce reblater n'a pas ï¿½tï¿½ soumis par cet utilisateur !");
             return error;
         }
     }
@@ -456,7 +455,7 @@ public class Webservice implements WebserviceInterface {
 
             return new SuccessModel();
         } else {
-            error.setMesage("Ce follow n'a pas été soumis par cet utilisateur !");
+            error.setMesage("Ce follow n'a pas ï¿½tï¿½ soumis par cet utilisateur !");
             return error;
         }
     }
