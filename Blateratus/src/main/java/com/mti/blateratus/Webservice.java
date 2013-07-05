@@ -171,7 +171,10 @@ public class Webservice implements WebserviceInterface {
 
         blater.setUser_id(user.getId());
         blater.setContent(content);
-
+        java.util.Date today = new java.util.Date();
+        java.sql.Date sqlToday = new java.sql.Date(today.getTime());
+        blater.setDate(sqlToday);
+        
         return blaterBo.add(blater);
     }
 
